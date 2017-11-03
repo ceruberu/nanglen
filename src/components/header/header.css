@@ -1,0 +1,19 @@
+.header {
+    display:flex;
+    flex: 0 50px;
+    align-items: center;
+    justify-content: space-around;
+    border-bottom: 1px solid gray(90%);
+}
+
+.searchBar {
+    flex: 0 0 200px;
+    border-radius: 7px;
+    background: gray(90%);
+    height: 35px;
+}
+
+.userInfo {
+    flex: 0 0 200px;
+    
+}
