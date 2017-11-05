@@ -16,6 +16,7 @@ import chalk from 'chalk';
 import { logServerStarted } from 'kit/lib/console';
 
 // Extend the server base
+import mongoConnect from 'src/mongoConnector';
 import server, { createReactHandler, staticMiddleware } from './server';
 
 // ----------------------
@@ -28,15 +29,16 @@ const scripts = ['vendor.js', 'browser.js'];
 // Runs inside an immediate `async` block, to await listening on ports
 (async () => {
   const { app, router, listen } = server;
-
+  const db = await mongoConnect();
   // Create proxy to tunnel requests to the browser `webpack-dev-server`
   router.get('/*', createReactHandler(css, scripts));
 
+  app.context.db = db;
   // Connect the development routes to the server
   app
     .use(staticMiddleware())
     .use(router.routes())
-    .use(router.allowedMethods());
+    .use(router.allowedMethods())
 
   // Spawn the server
   listen();

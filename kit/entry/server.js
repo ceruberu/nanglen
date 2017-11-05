@@ -121,7 +121,10 @@ const createNeworkInterface = (() => {
   }
 
   function externalInterface(ctx) {
-    return getNetworkInterface(config.graphQLEndpoint, ctx.apollo.networkOptions);
+    return getNetworkInterface(
+      config.graphQLEndpoint,
+      ctx.apollo.networkOptions,
+    );
   }
 
   return config.graphQLServer ? localInterface : externalInterface;
@@ -135,15 +138,19 @@ export function staticMiddleware() {
         return await koaSend(
           ctx,
           ctx.path,
-          process.env.NODE_ENV === 'production' ? {
-            root: PATHS.public,
-            immutable: true,
-          } : {
-            root: PATHS.distDev,
-          },
+          process.env.NODE_ENV === 'production'
+            ? {
+              root: PATHS.public,
+              immutable: true,
+            }
+            : {
+              root: PATHS.distDev,
+            },
         );
       }
-    } catch (e) { /* Errors will fall through */ }
+    } catch (e) {
+      /* Errors will fall through */
+    }
     return next();
   };
 }
@@ -158,11 +165,11 @@ export function createReactHandler(css = [], scripts = [], chunkManifest = {}) {
     // in `react-router`'s <StaticRouter> which will pull out URL info and
     // store it in our empty `route` object
     const components = (
-      <StaticRouter location={ctx.request.url} context={routeContext}>
-        <ApolloProvider store={ctx.store} client={ctx.apollo.client}>
-          <App />
-        </ApolloProvider>
-      </StaticRouter>
+        <StaticRouter location={ctx.request.url} context={routeContext}>
+            <ApolloProvider store={ctx.store} client={ctx.apollo.client}>
+                <App />
+            </ApolloProvider>
+        </StaticRouter>
     );
 
     // Wait for GraphQL data to be available in our initial render,
@@ -208,16 +215,16 @@ export function createReactHandler(css = [], scripts = [], chunkManifest = {}) {
     // Helmet component to generate the <head> tag, as well as our Redux
     // store state so that the browser can continue from the server
     const reactStream = ReactDOMServer.renderToNodeStream(
-      <Html
-        helmet={Helmet.renderStatic()}
-        window={{
+        <Html
+          helmet={Helmet.renderStatic()}
+          window={{
           webpackManifest: chunkManifest,
           __STATE__: ctx.store.getState(),
         }}
-        css={css}
-        scripts={scripts}>
-        {components}
-      </Html>,
+          css={css}
+          scripts={scripts}>
+            {components}
+        </Html>,
     );
 
     // Pipe the React stream to the HTML output
@@ -232,12 +239,11 @@ export function createReactHandler(css = [], scripts = [], chunkManifest = {}) {
 
 // Build the router, based on our app's settings.  This will define which
 // Koa route handlers
-const router = (new KoaRouter())
+const router = new KoaRouter()
   // Set-up a general purpose /ping route to check the server is alive
   .get('/ping', async ctx => {
     ctx.body = 'pong';
   })
-
   // Favicon.ico.  By default, we'll serve this as a 204 No Content.
   // If /favicon.ico is available as a static file, it'll try that first
   .get('/favicon.ico', async ctx => {
@@ -249,7 +255,6 @@ const router = (new KoaRouter())
 const app = new Koa()
   // Adds CORS config
   .use(koaCors(config.corsOptions))
-
   // Error wrapper.  If an error manages to slip through the middleware
   // chain, it will be caught and logged back here
   .use(async (ctx, next) => {
@@ -274,7 +279,7 @@ if (config.enableTiming) {
     const start = ms.now();
     await next();
     const end = ms.parse(ms.since(start));
-    const total = end.microseconds + (end.milliseconds * 1e3) + (end.seconds * 1e6);
+    const total = end.microseconds + end.milliseconds * 1e3 + end.seconds * 1e6;
     ctx.set('Response-Time', `${total / 1e3}ms`);
   });
 }
@@ -386,10 +391,12 @@ config.routes.forEach(route => {
 // `koa-bodyparser` is used to process POST requests.  Check that it's enabled
 // (default) and apply a custom config if we need one
 if (config.enableBodyParser) {
-  app.use(require('koa-bodyparser')(
-    // Pass in any options that may have been set in userland
-    config.bodyParserOptions,
-  ));
+  app.use(
+    require('koa-bodyparser')(
+      // Pass in any options that may have been set in userland
+      config.bodyParserOptions,
+    ),
+  );
 }
 
 /* CUSTOM APP INSTANTIATION */
@@ -408,15 +415,15 @@ const listen = () => {
 
   // Plain HTTP
   if (config.enableHTTP) {
-    servers.push(
-      http.createServer(app.callback()).listen(process.env.PORT),
-    );
+    servers.push(http.createServer(app.callback()).listen(process.env.PORT));
   }
 
   // SSL -- only enable this if we have an `SSL_PORT` set on the environment
   if (process.env.SSL_PORT) {
     servers.push(
-      https.createServer(config.sslOptions, app.callback()).listen(process.env.SSL_PORT),
+      https
+        .createServer(config.sslOptions, app.callback())
+        .listen(process.env.SSL_PORT),
     );
   }
 

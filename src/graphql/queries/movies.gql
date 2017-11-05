@@ -1,0 +1,19 @@
+# import "./movie.gql"
+
+fragment Movie on Movie {
+    Title
+    Year
+    Length
+    Synopsis
+    Genre
+    ReleaseDate
+    PosterUrl
+    LastOnAir
+}
+
+query movie {
+  movie {
+    ...Movie
+  }
+}
+
