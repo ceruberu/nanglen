@@ -3,8 +3,9 @@
 // Production server entry point.  Spawns the server on default HOST:PORT
 
 // ----------------------
-// IMPORTS
-
+// IMPORT
+import getCurrentDate from 'src/helper/getCurrentDate';
+import download from 'image-downloader';
 /* NPM */
 
 // Chalk terminal library
@@ -34,11 +35,21 @@ const scripts = ['vendor.js', 'browser.js'];
   router.get('/*', createReactHandler(css, scripts));
 
   app.context.db = db;
+  const currentDate = getCurrentDate();
+  const movies = await db.collection('movies').find({ LastOnAir: currentDate }).toArray();
+  const moviesPromises = movies.map(movie => download.image({
+    url: movie.PosterUrl,
+    dest: `../static/${movie._id}.jpg`,
+  }));
+  await Promise.all(moviesPromises)
+    .then(() => {
+      console.log('IMAGES SAVED');
+    })
+    .catch(err => {
+      throw err;
+    });
   // Connect the development routes to the server
-  app
-    .use(staticMiddleware())
-    .use(router.routes())
-    .use(router.allowedMethods())
+  app.use(staticMiddleware()).use(router.routes()).use(router.allowedMethods());
 
   // Spawn the server
   listen();

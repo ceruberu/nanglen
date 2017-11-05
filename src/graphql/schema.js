@@ -1,11 +1,10 @@
-
 // const movies = db.collection;
 
 // Schema for sample GraphQL server.
 
 // ----------------------
 // IMPORTS
-
+import getCurrentDate from 'src/helper/getCurrentDate';
 // import connectMongo from 'src/mongoConnector';
 
 // GraphQL schema library, for building our GraphQL schema
@@ -14,6 +13,7 @@ import {
   GraphQLString,
   GraphQLInt,
   GraphQLList,
+  GraphQLID,
   GraphQLSchema,
 } from 'graphql';
 
@@ -24,8 +24,8 @@ import {
 // will generally pull from a 'real' data source such as a database
 
 async function getMovies(ctx) {
-  console.log(ctx," CTX ");
-  const movies = ctx.db.collection('movies').find({ LastOnAir: '20171104' });
+  const currentDate = getCurrentDate();
+  const movies = ctx.db.collection('movies').find({ LastOnAir: currentDate });
   return movies.toArray();
 }
 
@@ -34,6 +34,11 @@ const MovieType = new GraphQLObjectType({
   description: 'Define a single movie',
   fields() {
     return {
+      id: {
+        type: GraphQLID,
+        description: "Movie's Id",
+        resolve: movie => movie._id,
+      },
       Title: {
         type: GraphQLString,
         description: "Movie's Title",
@@ -44,7 +49,41 @@ const MovieType = new GraphQLObjectType({
         description: "Movie's year",
         resolve: movie => movie.Year,
       },
-
+      Synopsis: {
+        type: GraphQLString,
+        description: "Movie's Synopsis",
+        resolve: movie => movie.Synopsis,
+      },
+      Genre: {
+        type: new GraphQLList(GraphQLString),
+        description: "Movie's Genre",
+        resolve: movie => movie.Genre,
+      },
+      ReleaseDate: {
+        type: GraphQLString,
+        description: "Movie's Release Date",
+        resolve: movie => movie.ReleaseDate,
+      },
+      PosterUrl: {
+        type: GraphQLString,
+        description: "Movie's Poster Url",
+        resolve: movie => movie.PosterUrl,
+      },
+      Length: {
+        type: GraphQLString,
+        description: "Movie's Length",
+        resolve: movie => movie.Length,
+      },
+      Actors: {
+        type: new GraphQLList(GraphQLString),
+        description: 'Actors in Movie',
+        resolve: movie => movie.Actors,
+      },
+      Director: {
+        type: GraphQLString,
+        description: 'Director of Movie',
+        resolve: movie => movie.Director,
+      },
     };
   },
 });
@@ -55,20 +94,11 @@ const Query = new GraphQLObjectType({
   description: 'Root query object',
   fields() {
     return {
-      message: {
-        type: Message,
-        resolve() {
-          return getMessage();
-        },
-      },
       getMovies: {
         type: new GraphQLList(MovieType),
+        args: { genre: { type: GraphQLString } },
         resolve: async (root, args, ctx) => getMovies(ctx),
       },
-      // movie: {
-      //   type: MovieType,
-      //   resolve: async 
-      // }
     };
   },
 });

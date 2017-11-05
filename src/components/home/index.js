@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import css from './home.css';
 
+import MovieList from '../movieList';
 // const Home = props => (
 // <div className={css.app}>
 //     <div className={css.header}>
@@ -22,9 +23,7 @@ export default class Home extends Component {
     return (
         <div className={css.app}>
             <div className={css.content}>
-                <div className={css.movies}>
-                 Movies
-                </div>
+                <MovieList />
             </div>
             <div className={css.footer}>
               FOOTER

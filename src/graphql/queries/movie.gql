@@ -1,6 +1,5 @@
-# import "./movie.gql"
-
 fragment Movie on Movie {
+    id
     Title
     Year
     Length
@@ -8,12 +7,7 @@ fragment Movie on Movie {
     Genre
     ReleaseDate
     PosterUrl
-    LastOnAir
-}
-
-query movie {
-  movie {
-    ...Movie
-  }
+    Actors
+    Director
 }
 

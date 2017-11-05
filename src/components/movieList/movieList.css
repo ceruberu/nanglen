@@ -1,0 +1,65 @@
+.movie {
+    display: flex;
+    flex: 0 0 300px;
+    width: 800px;
+    margin: 20px 20px 0px 20px;
+    /* padding: 10px; */
+    border: 1px solid gray(80%);
+    background-color: white;
+    border-radius: 5px;
+    overflow:hidden;
+}
+
+.moviePoster {
+    /* flex: 0 0 200px; */
+    width: 200px;
+    height: 300px;
+    /* border-radius: 5px 0px 0px 5px; */
+}
+
+.movieInfo {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    padding: 20px;
+}
+
+.movieTitle {
+    display: flex;
+    align-items: center;
+    flex: 0 0 35px;
+    font-size: 20px;
+    border-bottom: 1px solid gray(90%); 
+}
+
+.movieLength {
+    display: flex;
+    align-items: center;
+    flex: 0 0 25px;
+}
+
+.movieGenre {
+    display: flex;
+    align-items: center;
+    flex: 0 0 25px;
+}
+
+.movieDirector {
+    padding-top: 3px;
+    overflow:hidden;
+    flex: 0 0 22px;
+    align-items: center;    
+    max-width: 560px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.movieActors {
+    overflow:hidden;
+    padding-top: 3px;
+    flex: 0 0 22px;    
+    align-items: center;    
+    max-width: 560px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
