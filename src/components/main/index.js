@@ -47,7 +47,8 @@ import { Redirect, history } from 'kit/lib/routing';
 // multiple components per file where it makes sense to do so
 // import GraphQLMessage from 'components/graphql';
 import Header from 'components/header';
-import Home from 'components/home';
+import Movie from 'components/movie';
+import MovieList from 'components/movieList';
 // import { Home, Page, WhenNotFound } from 'components/routes';
 // import ReduxCounter from 'components/redux';
 // import Stats from 'components/stats';
@@ -76,9 +77,17 @@ export default () => (
             <meta name="description" content="ReactQL starter kit app" />
         </Helmet>
         <Header />
-        <Switch>
-            <Route exact path="/" component={Home} />
-        </Switch>
+        <div className={css.app}>
+            <div className={css.content}>
+                <Switch>
+                    <Route exact path="/" component={MovieList} />
+                    <Route path="/movie/:moviename" component={Movie} />
+                </Switch>
+            </div>
+            <div className={css.footer}>
+                FOOTER
+            </div>
+        </div>
     </div>
 );
 

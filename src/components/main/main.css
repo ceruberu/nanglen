@@ -4,3 +4,27 @@
     height: 100%;
     flex: 1;
 }
+
+.app {
+    display: flex;
+    flex: auto;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
+.content { 
+    display: flex;
+    flex-direction: column;
+    flex: 1 0 auto;
+    align-items: center;
+    background-color: gray(90%);
+    padding-bottom: 20px;
+}
+
+.footer {
+    display: flex;
+    flex: 0 0 50px;
+    border-top: 1px solid gray(90%);
+    align-items: center;
+    min-width: 800px;
+}

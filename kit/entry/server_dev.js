@@ -31,13 +31,16 @@ const scripts = ['vendor.js', 'browser.js'];
 (async () => {
   const { app, router, listen } = server;
   const db = await mongoConnect();
+  const movies = db.collection('movies');
   // Create proxy to tunnel requests to the browser `webpack-dev-server`
   router.get('/*', createReactHandler(css, scripts));
 
   app.context.db = db;
+  app.context.movies = movies;
+
   const currentDate = getCurrentDate();
-  const movies = await db.collection('movies').find({ LastOnAir: currentDate }).toArray();
-  const moviesPromises = movies.map(movie => download.image({
+  const currentMovies = await db.collection('movies').find({ LastOnAir: currentDate }).toArray();
+  const moviesPromises = currentMovies.map(movie => download.image({
     url: movie.PosterUrl,
     dest: `../static/${movie._id}.jpg`,
   }));

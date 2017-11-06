@@ -4,6 +4,7 @@
 
 // ----------------------
 // IMPORTS
+// import { ObjectId } from 'mongodb';
 import getCurrentDate from 'src/helper/getCurrentDate';
 // import connectMongo from 'src/mongoConnector';
 
@@ -25,9 +26,32 @@ import {
 
 async function getMovies(ctx) {
   const currentDate = getCurrentDate();
-  const movies = ctx.db.collection('movies').find({ LastOnAir: currentDate });
+  const movies = ctx.movies.find({ LastOnAir: currentDate });
   return movies.toArray();
 }
+
+async function getMovie(args, ctx) {
+  // if (args.id) {
+  //   const movie = ctx.movies.findOne({ _id: new ObjectId(args.id) });
+  //   return movie;
+  // }
+  const movie = ctx.movies.findOne({ Title: args.title.split('_').join(' ') });
+  return movie;
+}
+
+const ReviewType = new GraphQLObjectType({
+  name: 'Review',
+  description: 'Array of Reviews',
+  fields() {
+    return {
+      Text: {
+        type: GraphQLString,
+        description: "Users' Review ",
+        resolve: review => review.Text,
+      },
+    };
+  },
+});
 
 const MovieType = new GraphQLObjectType({
   name: 'Movie',
@@ -84,6 +108,11 @@ const MovieType = new GraphQLObjectType({
         description: 'Director of Movie',
         resolve: movie => movie.Director,
       },
+      Reviews: {
+        type: new GraphQLList(ReviewType),
+        description: 'User Reviews',
+        resolve: movie => movie.Reviews,
+      },
     };
   },
 });
@@ -98,6 +127,11 @@ const Query = new GraphQLObjectType({
         type: new GraphQLList(MovieType),
         args: { genre: { type: GraphQLString } },
         resolve: async (root, args, ctx) => getMovies(ctx),
+      },
+      getMovie: {
+        type: MovieType,
+        args: { id: { type: GraphQLID }, title: { type: GraphQLString } },
+        resolve: async (root, args, ctx) => getMovie(args, ctx),
       },
     };
   },
